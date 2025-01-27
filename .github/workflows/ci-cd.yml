@@ -15,7 +15,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18.'
+          node-version: '18'
 
       - name: Install dependencies
         run: npm install
@@ -28,8 +28,11 @@ jobs:
 
   deploy:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
       - name: SSH Deploy
         uses: appleboy/ssh-action@v0.1.9
         with:
@@ -42,4 +45,3 @@ jobs:
             npm install
             npm run build
             pm2 restart app
-
