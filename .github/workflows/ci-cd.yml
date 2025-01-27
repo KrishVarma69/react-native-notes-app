@@ -1,4 +1,4 @@
-name: CI-CD_Pipeline
+name: CI-CD Pipeline
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
     - name: Checkout code
@@ -27,6 +27,9 @@ jobs:
           # Install PM2
           sudo npm install -g pm2
           
+          # Install Expo CLI globally
+          sudo npm install -g expo-cli
+          
           # Clone the repository if it does not exist
           if [ ! -d "/home/ubuntu/react-native-notes-app" ]; then
             git clone https://github.com/KrishVarma69/react-native-notes-app.git /home/ubuntu/react-native-notes-app
@@ -38,11 +41,17 @@ jobs:
           # Pull the latest changes
           git pull origin main
           
+          # Fix vulnerabilities
+          npm audit fix
+          
           # Install dependencies
           npm install
           
           # Build the project
           npm run build
+          
+          # Start the application using PM2 if not already running
+          pm2 describe app || pm2 start npm --name "app" -- run start
           
           # Restart the application using PM2
           pm2 restart app
