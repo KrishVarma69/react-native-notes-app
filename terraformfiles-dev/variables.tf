@@ -2,7 +2,7 @@
 
 variable "region" {
   description = "The AWS region to deploy in"
-  default     = "us-east-1"
+  default     = "us-wast-2"
 }
 
 variable "vpc_cidr" {
