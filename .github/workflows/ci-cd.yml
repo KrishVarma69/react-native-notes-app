@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: Deploy
 
 on:
   push:
@@ -6,42 +6,43 @@ on:
       - main
 
 jobs:
-  build:
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Run tests
-        run: npm test
-
-      - name: Build application
-        run: npm run build
-
   deploy:
-    needs: build
     runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
 
-      - name: SSH Deploy
-        uses: appleboy/ssh-action@v0.1.9
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            cd /home/ubuntu/react-native-notes-app/
-            git pull origin main
-            npm install
-            npm run build
-            pm2 restart app
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Ensure Node.js and npm are installed
+      run: |
+        curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+        sudo apt-get install -y nodejs
+
+    - name: Install PM2
+      run: sudo npm install -g pm2
+
+    - name: Deploy via SSH
+      uses: appleboy/ssh-action@v0.1.9
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          if [ ! -d "/home/ubuntu/react-native-notes-app" ]; then
+            git clone https://github.com/KrishVarma69/react-native-notes-app.git /home/ubuntu/react-native-notes-app
+          fi
+          cd /home/ubuntu/react-native-notes-app/
+          git pull origin main
+          npm install
+          npm run build
+          pm2 restart app
+        port: 22
+        sync: false
+        use_insecure_cipher: false
+        timeout: 30s
+        command_timeout: 10m
+        proxy_port: 22
+        proxy_timeout: 30s
+        proxy_use_insecure_cipher: false
+        script_stop: false
+        debug: false
