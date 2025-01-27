@@ -1,4 +1,4 @@
-name: Deploy
+name: CI-CD_Pipeline
 
 on:
   push:
@@ -7,19 +7,11 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-
-    - name: Ensure Node.js and npm are installed
-      run: |
-        curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
-        sudo apt-get install -y nodejs
-
-    - name: Install PM2
-      run: sudo npm install -g pm2
 
     - name: Deploy via SSH
       uses: appleboy/ssh-action@v0.1.9
@@ -28,13 +20,31 @@ jobs:
         username: ${{ secrets.SSH_USERNAME }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
+          # Install Node.js and npm
+          curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+          sudo apt-get install -y nodejs
+          
+          # Install PM2
+          sudo npm install -g pm2
+          
+          # Clone the repository if it does not exist
           if [ ! -d "/home/ubuntu/react-native-notes-app" ]; then
             git clone https://github.com/KrishVarma69/react-native-notes-app.git /home/ubuntu/react-native-notes-app
           fi
+          
+          # Navigate to the project directory
           cd /home/ubuntu/react-native-notes-app/
+          
+          # Pull the latest changes
           git pull origin main
+          
+          # Install dependencies
           npm install
+          
+          # Build the project
           npm run build
+          
+          # Restart the application using PM2
           pm2 restart app
         port: 22
         sync: false
