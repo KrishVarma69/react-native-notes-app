@@ -168,5 +168,6 @@ EXPOSE 3000
 # Start the app
 CMD ["npm", "start"]
 ```
+![image](https://github.com/user-attachments/assets/7bb2cae3-468e-44ae-8953-13ed7d6ffed9)
 
 By following these instructions, you can deploy your React Native Notes App to an AWS EC2 instance using GitHub Actions and Terraform. Let me know if you have any further questions or need additional assistance! 😊
