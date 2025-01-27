@@ -7,7 +7,7 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "eject": "expo eject"
+    "eject": "expo eject",
     "test": "echo \"Error: no test specified\" && exit 0"
   },
   "dependencies": {
@@ -42,8 +42,6 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-native": "^4.0.0"
   },
-  "private": true
-  },
   "private": true,
   "expo": {
     "doctor": {
@@ -55,3 +53,4 @@
       }
     }
   }
+}
