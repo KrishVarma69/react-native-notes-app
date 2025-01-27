@@ -1,4 +1,4 @@
-name: CI-CD Pipeline
+name: Build and Deploy
 
 on:
   push:
@@ -6,7 +6,29 @@ on:
       - main
 
 jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Fix vulnerabilities
+      run: npm audit fix
+
+    - name: Build the project
+      run: npm run build
+
   deploy:
+    needs: build
     runs-on: ubuntu-22.04
 
     steps:
@@ -40,9 +62,6 @@ jobs:
           
           # Pull the latest changes
           git pull origin main
-          
-          # Fix vulnerabilities
-          npm audit fix
           
           # Install dependencies
           npm install
