@@ -42,4 +42,16 @@
     "eslint-plugin-react-native": "^4.0.0"
   },
   "private": true
+  },
+  "private": true,
+  "expo": {
+    "doctor": {
+      "reactNativeDirectoryCheck": {
+        "exclude": [
+          "moment",
+          "react-navigation-shared-element"
+        ]
+      }
+    }
+  }
 }
